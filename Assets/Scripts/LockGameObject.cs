@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LockGameObject : MonoBehaviour, IEventObserver
 {
@@ -23,15 +24,18 @@ public class LockGameObject : MonoBehaviour, IEventObserver
 
     public void Initialize()
     {
-        gameManager.eventManager.AddListener(this, (int)GameEvents.OnScreenTap);
+        gameManager.EventManager.AddListener(this, (int)GameEvents.OnScreenTap);
         RandomizeKnob();
     }
 
     private void Update()
     {
-        float rotationZ = GetRotationSpeed();
-        Vector3 newRotation = new Vector3(0, 0, rotationZ);
-        playerCircle.transform.eulerAngles = newRotation;
+        if (gameManager.PlayState == PlayStateEnum.Play)
+        {
+            float rotationZ = GetRotationSpeed();
+            Vector3 newRotation = new Vector3(0, 0, rotationZ);
+            playerCircle.transform.eulerAngles = newRotation;
+        }
     }
 
     public void OnEvent(int eventId, object payload)
@@ -54,19 +58,31 @@ public class LockGameObject : MonoBehaviour, IEventObserver
     {
         if (playerKnocker.IsKnockerHit)
         {
-            RandomizeKnob();
-            playerKnocker.IsKnockerHit = false;
-            rotationalDir *= -1;
-
-            if ((config.rotateSpeed + rotationIncSpeed) < config.rotateMaxSpeed)
-            {
-                rotationIncSpeed += config.rotateIncrements;
-            }
+            SuccessHit();
         }
         else
         {
-
+            FailHit();
         }
+    }
+
+    private void SuccessHit()
+    {
+        RandomizeKnob();
+        playerKnocker.IsKnockerHit = false;
+        rotationalDir *= -1;
+
+        if ((config.rotateSpeed + rotationIncSpeed) < config.rotateMaxSpeed)
+        {
+            rotationIncSpeed += config.rotateIncrements;
+        }
+
+        gameManager.EventManager.Send((int)GameEvents.OnSuccessHit);
+    }
+
+    private void FailHit()
+    {
+        gameManager.EventManager.Send((int)GameEvents.OnFailHit);
     }
 
     private void RandomizeKnob()
@@ -74,5 +90,18 @@ public class LockGameObject : MonoBehaviour, IEventObserver
         float rotationZ = (playerKnob.transform.eulerAngles.z + Random.Range(60, 360));
         Vector3 newRotation = new Vector3(0, 0, rotationZ);
         playerKnob.transform.eulerAngles = newRotation;
+    }
+
+    public void ShowPlayerControllers(bool isShow)
+    {
+        playerCircle.SetActive(isShow);
+        playerKnob.SetActive(isShow);
+    }
+
+    public void ResetLockObject()
+    {
+        RandomizeKnob();
+        rotationIncSpeed = 0;
+        rotationalDir = 1;
     }
 }

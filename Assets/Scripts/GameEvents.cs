@@ -3,7 +3,10 @@
     start,
 
     OnScreenTap,
+    OnSuccessHit,
+    OnFailHit,
 
+    LevelStart,
     WinLevel,
     GameOver,
 

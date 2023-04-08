@@ -1,21 +1,39 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameUICanvas : MonoBehaviour
 {
     [SerializeField]
-    private Button ClickButton;
+    private TextMeshProUGUI pointsText;
+
+    [SerializeField]
+    private EventTrigger trigger;
 
     [SerializeField]
     private GameManager gameManager;
 
     public void InitializeGameCanvas()
     {
-        ClickButton.onClick.AddListener(OnScreenTap);
+        trigger.triggers[0].callback.AddListener((test) => { OnScreenTapEvent(); });
     }
 
-    private void OnScreenTap()
+    public void OnScreenTapEvent()
     {
-        gameManager.eventManager.Send((int)GameEvents.OnScreenTap);
+        if (gameManager.PlayState == PlayStateEnum.Play)
+        {
+            gameManager.EventManager.Send((int)GameEvents.OnScreenTap);
+        }
+    }
+
+    public void ShowTargetText(bool isShow)
+    {
+        pointsText.gameObject.SetActive(isShow);
+    }
+
+    public void SetTargetPointsText(int targetPoints)
+    {
+        pointsText.text = targetPoints.ToString();
     }
 }
