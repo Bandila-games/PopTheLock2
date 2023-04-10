@@ -53,11 +53,13 @@ public class GameManager : MonoBehaviour, IEventObserver
             DataManager.SaveCurrentLevel(0);
         }
 
+        gameUICanvas.ShowButton(false);
         uiCanvasController.ShowMenu(true);
     }
 
     private void StartLevel()
     {
+        gameUICanvas.ShowButton(true);
         DataManager.CurrentTargetScore = levelConfig.TargetLevelCount[DataManager.CurrentLevel];
         gameUICanvas.SetTargetPointsText(DataManager.CurrentTargetScore);
         gameUICanvas.ShowTargetText(true);
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour, IEventObserver
 
     private void PauseGame(bool isPaused)
     {
+        gameUICanvas.ShowButton(false);
         //uiCanvasController.ShowPauseMenu(isPaused);
         //PlayState state = isPaused ? PlayState.Pause : PlayState.Play;
         //lockController.SetPlayState(PlayState.state);
@@ -77,6 +80,7 @@ public class GameManager : MonoBehaviour, IEventObserver
 
     private void InitiateWinSequence()
     {
+        gameUICanvas.ShowButton(false);
         gameUICanvas.ShowTargetText(false);
         lockController.ShowPlayerControllers(false);
         this.PlayState = PlayStateEnum.Paused;
@@ -96,6 +100,7 @@ public class GameManager : MonoBehaviour, IEventObserver
 
     private void InitiateLoseSequence()
     {
+        gameUICanvas.ShowButton(false);
         gameUICanvas.ShowTargetText(false);
         uiCanvasController.ShowResultsScreen(true);
         uiCanvasController.ShowStar(false);

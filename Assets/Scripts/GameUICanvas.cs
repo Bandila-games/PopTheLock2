@@ -27,6 +27,11 @@ public class GameUICanvas : MonoBehaviour
         }
     }
 
+    public void ShowButton(bool isShow)
+    {
+        trigger.gameObject.SetActive(isShow);
+    }
+
     public void ShowTargetText(bool isShow)
     {
         pointsText.gameObject.SetActive(isShow);
